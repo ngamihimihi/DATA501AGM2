@@ -7,15 +7,30 @@
 e_step_general_impute(data, mu, Sigma)
 }
 \arguments{
-\item{data}{A numeric matrix with NAs}
+\item{data}{A numeric matrix with missing values (NAs).}
 
-\item{mu}{Mean vector}
+\item{mu}{A numeric vector representing the mean of the distribution.}
 
-\item{Sigma}{Covariance matrix}
+\item{Sigma}{A numeric covariance matrix (must be positive definite).}
 }
 \value{
-Matrix with missing entries imputed using conditional expectations
+A numeric matrix of the same dimensions as \code{data}, with missing
+values imputed using the conditional expectation given observed values.
 }
 \description{
-General E-step Imputation
+Performs the E-step of the EM algorithm by imputing missing entries in a
+numeric matrix using conditional expectations under the multivariate normal model.
+}
+\details{
+This function is typically called internally by the EM loop
+(\code{\link{run_em_algorithm}}), but it can be used standalone for testing.
+}
+\examples{
+data <- matrix(c(1, NA, 3, 4), ncol = 2)
+mu <- colMeans(data, na.rm = TRUE)
+Sigma <- diag(2)
+e_step_general_impute(data, mu, Sigma)
+}
+\seealso{
+\code{\link{run_em_algorithm}}, \code{\link{log_likelihood_mvnorm}}
 }

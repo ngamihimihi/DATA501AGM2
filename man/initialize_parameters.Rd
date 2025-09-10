@@ -2,16 +2,35 @@
 % Please edit documentation in R/initialize_parameters.R
 \name{initialize_parameters}
 \alias{initialize_parameters}
-\title{Initialize parameters from incomplete data}
+\title{Initialize Parameters from Incomplete Data}
 \usage{
 initialize_parameters(data)
 }
 \arguments{
-\item{data}{A numeric matrix with NAs}
+\item{data}{A numeric matrix with missing values (NAs). Must contain at least one non-missing value per column.}
 }
 \value{
-A list with estimated \code{mu} and \code{Sigma}
+A list with elements:
+\describe{
+\item{mu}{A numeric vector of column-wise means (ignoring NAs).}
+\item{Sigma}{A covariance matrix estimated using pairwise complete observations.}
+}
 }
 \description{
-Initialize parameters from incomplete data
+Computes initial estimates for the mean vector (\code{mu}) and covariance matrix (\code{Sigma})
+from a numeric matrix containing missing values.
+}
+\details{
+This function provides a simple initialization for the EM algorithm,
+assuming missing values are ignorable for first-pass estimates. It uses
+\code{colMeans(..., na.rm = TRUE)} and \code{cov(..., use = "pairwise.complete.obs")}.
+}
+\examples{
+data <- matrix(c(1, NA, 3, 4, 5, 6), ncol = 2)
+init <- initialize_parameters(data)
+init$mu
+init$Sigma
+}
+\seealso{
+\code{\link{run_em_algorithm}}, \code{\link{e_step_general_impute}}
 }

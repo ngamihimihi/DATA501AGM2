@@ -1,11 +1,37 @@
-#' Run EM Algorithm for Imputation (Updating S3 Class)
+#' Run the EM Algorithm on an em_model Object
 #'
-#' @param model An object of class 'em_model'
-#' @param tolerance Convergence tolerance for log-likelihood
-#' @param max_iter Maximum number of iterations
+#' Iteratively imputes missing values using the Expectation-Maximization (EM)
+#' algorithm under the assumption of multivariate normality. The algorithm
+#' alternates between imputing missing values (E-step) and updating parameters
+#' (M-step) until convergence.
 #'
-#' @return Updated 'em_model' object
+#' @param model An object of class \code{em_model}, initialized with a numeric matrix.
+#' @param tolerance A numeric threshold for convergence based on change in log-likelihood
+#'   between iterations. Default is \code{1e-5}.
+#' @param max_iter Maximum number of iterations before stopping. Default is \code{100}.
+#'
+#' @return The updated \code{em_model} object with fields populated:
+#' \describe{
+#'   \item{loglik_history}{A numeric vector of log-likelihood values per iteration.}
+#'   \item{parameters}{Final estimates: mean vector \code{mu} and covariance \code{Sigma}.}
+#'   \item{parameter_history}{List of \code{mu} and \code{Sigma} estimates at each iteration.}
+#'   \item{imputed}{Matrix with imputed values filled in.}
+#'   \item{early_stop}{List containing convergence flag and iteration count.}
+#' }
+#'
+#' @details The E-step uses conditional expectations to impute missing values,
+#' and the M-step updates the mean and covariance estimates using the imputed data.
+#'
+#' @seealso \code{\link{em_model}}, \code{\link{e_step_general_impute}}, \code{\link{m_step_estimate}}, \code{\link{log_likelihood_mvnorm}}
+#'
 #' @export
+#'
+#' @examples
+#' data <- matrix(c(1, NA, 3, 4), ncol = 2)
+#' model <- em_model(data)
+#' result <- run_em_algorithm(model, max_iter = 5)
+#' result$imputed
+#' plot(result$loglik_history, type = "l", main = "Log-Likelihood")
 run_em_algorithm <- function(model, tolerance = 1e-5, max_iter = 100) {
   stopifnot(inherits(model, "em_model"))
   
